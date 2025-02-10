@@ -12,7 +12,7 @@ class PaginationExample extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: AdaptiveLayout(
           desktopLayout: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,   
             children: [
               _buildItemsPerPageDropdown(),
               SizedBox(width: 16),
