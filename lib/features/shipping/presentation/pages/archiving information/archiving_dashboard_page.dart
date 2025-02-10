@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shipping/features/shipping/presentation/pages/shipping%20information/shipping_tool_bar.dart';
-import 'package:shipping/features/shipping/presentation/pages/shipping%20information/shipping_main_menu.dart';
-import 'package:shipping/features/shipping/presentation/pages/home/shipping_appbar.dart';
+import 'package:shipping/features/shipping/presentation/pages/archiving%20information/archiving_main_menu.dart';
+import 'package:shipping/features/shipping/presentation/pages/home/archiving_appbar.dart';
 
 class DashboardPage extends StatelessWidget {
   @override
@@ -23,11 +22,11 @@ class DashboardPage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        'assets/images/onix_logo.png',
-                        height: 100,
-                        width: 130,
-                      ),
+                      // Image.asset(
+                      //   // 'assets/images/onix_logo.png',
+                      //   height: 100,
+                      //   width: 130,
+                      // ),
                       const SizedBox(height: 10),
                     ],
                   ),
@@ -74,7 +73,6 @@ class DashboardPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const SummaryPanel(),
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shipping/core/utils/responsive.dart';
-import 'package:shipping/features/shipping/presentation/pages/shipping%20information/shipping_dashboard_page.dart';
+import 'package:shipping/features/shipping/presentation/pages/archiving%20information/archiving_dashboard_page.dart';
 import 'package:shipping/features/shipping/presentation/pages/home/export_file_dialog.dart';
 
 class HeaderTableOrders extends StatefulWidget {

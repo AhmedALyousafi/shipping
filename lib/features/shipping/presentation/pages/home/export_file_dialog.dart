@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 
 ListTile _createDrawerItem(IconData icon, String text) {
   return ListTile(
@@ -21,14 +24,15 @@ class ExportFileDialog extends StatefulWidget {
 
 class _ExportFileDialogState extends State<ExportFileDialog> {
   String? selectedFormat;
+  File? _pickedFile;
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: AlertDialog(
-        contentPadding: EdgeInsets.all(16),
-        titlePadding: EdgeInsets.only(top: 16, right: 16, left: 16),
+        contentPadding: const EdgeInsets.all(16),
+        titlePadding: const EdgeInsets.only(top: 16, right: 16, left: 16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -40,44 +44,32 @@ class _ExportFileDialogState extends State<ExportFileDialog> {
               Expanded(
                 child: DropdownButtonFormField2<String>(
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.all(10),
+                    contentPadding: const EdgeInsets.all(10),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  iconStyleData: IconStyleData(
+                  iconStyleData: const IconStyleData(
                     icon: Icon(Icons.keyboard_arrow_down),
                     iconSize: 24,
                   ),
-                  hint: Text("اختر صيغة الملف"),
-                  items: [
+                  hint: const Text("*صيغة الملف"),
+                  items: const [
                     DropdownMenuItem(
-                      value: "CSV",
+                      value: "رفع من الجهاز",
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text("CSV", textAlign: TextAlign.right),
-                          Icon(Icons.file_download, color: Colors.green),
+                          Text("رفع من الجهاز", textAlign: TextAlign.right),
                         ],
                       ),
                     ),
                     DropdownMenuItem(
-                      value: "Word",
+                      value: "استخدام الماسح الضوئي",
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text("Word", textAlign: TextAlign.right),
-                          Icon(Icons.file_download, color: Colors.blue),
-                        ],
-                      ),
-                    ),
-                    DropdownMenuItem(
-                      value: "PDF",
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text("PDF", textAlign: TextAlign.right),
-                          Icon(Icons.file_download, color: Colors.red),
+                          Text("استخدام الماسح الضوئي", textAlign: TextAlign.right),
                         ],
                       ),
                     ),
@@ -89,27 +81,47 @@ class _ExportFileDialogState extends State<ExportFileDialog> {
                   },
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               ElevatedButton(
-                onPressed: () {
-                  if (selectedFormat != null) {
-                    Navigator.pop(context, selectedFormat);
+                onPressed: () async {
+                  if (selectedFormat == "رفع من الجهاز") {
+                    // Open file picker
+                    FilePickerResult? result =
+                        await FilePicker.platform.pickFiles();
+
+                    if (result != null) {
+                      setState(() {
+                        _pickedFile = File(result.files.single.path!); 
+                      });
+                    }
+                  } else {
+                    // Handle "استخدام الماسح الضوئي" case here
+                    // ...
+                  }
+
+                  if (selectedFormat != null && _pickedFile != null) {
+                    // Proceed with file upload or other actions
+                    // ...
+                    Navigator.pop(context, _pickedFile); 
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("يرجى اختيار صيغة الملف")),
+                      const SnackBar(content: Text("يرجى اختيار رفع المرفقات")),
                     );
                   }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.save_alt, size: 20, color: Colors.white),
                     SizedBox(width: 8),
-                    Text("إستخراج"),
+                    Text(
+                      "رفع المرفق",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ],
                 ),
               ),
@@ -119,9 +131,9 @@ class _ExportFileDialogState extends State<ExportFileDialog> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("استخراج ملف", style: TextStyle(fontSize: 20)),
+            const Text("رفع المرفقات", style: TextStyle(fontSize: 20)),
             IconButton(
-              icon: Icon(Icons.close),
+              icon: const Icon(Icons.close),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -131,11 +143,4 @@ class _ExportFileDialogState extends State<ExportFileDialog> {
       ),
     );
   }
-}
-
-Widget build(BuildContext context) {
-  var isCollapsed;
-  return Container(
-    child: Text(isCollapsed ? 'Collapsed' : 'Expanded'),
-  );
 }

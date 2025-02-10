@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:shipping/features/shipping/presentation/pages/shipping%20information/inputFormScreen%20.dart';
+import 'package:shipping/features/shipping/presentation/pages/archiving%20information/inputFormScreen%20.dart';
 
 class TapScreen extends StatelessWidget {
   const TapScreen({super.key});

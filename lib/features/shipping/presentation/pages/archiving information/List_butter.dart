@@ -1,14 +1,9 @@
-//التحكم بي العناصر التالية:الصفحة الرئيسية,بيانات اخرى,بيانات اضافية,الضريبة,وغيره
+//التحكم بي العناصر التالية:الصفحة الرئيسية
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shipping/core/cubit/cubit.dart';
 import 'package:shipping/core/cubit/state.dart';
-import 'package:shipping/features/shipping/presentation/pages/tab_pages/widgets/tab_document_form_fields.dart';
-import 'package:shipping/features/shipping/presentation/pages/tab_pages/widgets/tap_add_field.dart';
-import 'package:shipping/features/shipping/presentation/pages/tab_pages/widgets/tab_additional_data.dart';
-import 'package:shipping/features/shipping/presentation/pages/tab_pages/widgets/tap_Insurance_widgets.dart';
-import 'package:shipping/features/shipping/presentation/pages/tab_pages/widgets/tap_total_containers.dart';
 
 import '../tab_pages/tap_screen.dart';
 
@@ -40,24 +35,13 @@ class _TabsAndPagesState extends State<DocumentForm1>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CustomerOrdersCubit, CustomerOrdersState>(
+    return BlocBuilder<ArchivingCubit, ArchivingState>(
       builder: (context, state) {
-        _initializeControllers(state.credit);
         final tabs = <Widget>[
-          _buildTab('حقول أضافية '),
-          _buildTab('اجمالي الحاويات'),
-          _buildTab('التأمين '),
-          _buildTab('بيانات أضافية'),
-          _buildTab('بيانات أخرى'),
           _buildTab('البيانات الرئيسية'),
         ];
 
         final views = <Widget>[
-          Addfield(),
-          TapTotalContainer(),
-          TapInsurance(),
-          Additionaldata(),
-          DocumentFormFields(),
           TapScreen(),
         ];
 
@@ -144,8 +128,8 @@ class _TabsAndPagesState extends State<DocumentForm1>
                   ],
                 ),
                 height: MediaQuery.of(context).size.height < 300
-                    ? MediaQuery.of(context).size.height * 2
-                    : MediaQuery.of(context).size.height * 1.5,
+                    ? MediaQuery.of(context).size.height * 1.5
+                    : MediaQuery.of(context).size.height * 0.94,
                 child: TabBarView(
                   controller: _tabDesktopController,
                   children: views,

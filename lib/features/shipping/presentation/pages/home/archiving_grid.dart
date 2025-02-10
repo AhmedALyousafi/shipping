@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
-import 'package:shipping/features/shipping/presentation/pages/shipping%20information/shipping_dashboard_page.dart';
+import 'package:shipping/features/shipping/presentation/pages/archiving%20information/archiving_dashboard_page.dart';
 
 class CustomGrid extends StatefulWidget {
   const CustomGrid({super.key});
