@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shipping/core/utils/responsive.dart';
 import 'package:shipping/features/shipping/presentation/pages/home/drawer_widget.dart';
-import 'package:shipping/features/shipping/presentation/pages/home/shipping_breadcrumb.dart';
-import 'package:shipping/features/shipping/presentation/pages/home/shipping_appbar.dart';
-import 'package:shipping/features/shipping/presentation/pages/home/shipping_grid.dart';
+import 'package:shipping/features/shipping/presentation/pages/home/archiving_breadcrumb.dart';
+import 'package:shipping/features/shipping/presentation/pages/home/archiving_appbar.dart';
+import 'package:shipping/features/shipping/presentation/pages/home/archiving_grid.dart';
 
 class ShippingPage extends StatelessWidget {
   const ShippingPage({super.key});

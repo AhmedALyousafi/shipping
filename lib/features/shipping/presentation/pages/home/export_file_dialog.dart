@@ -49,35 +49,24 @@ class _ExportFileDialogState extends State<ExportFileDialog> {
                     icon: Icon(Icons.keyboard_arrow_down),
                     iconSize: 24,
                   ),
-                  hint: Text("اختر صيغة الملف"),
+                  hint: Text("*صيغة الملف"),
                   items: [
                     DropdownMenuItem(
-                      value: "CSV",
+                      value: "رفع من الجهاز",
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text("CSV", textAlign: TextAlign.right),
-                          Icon(Icons.file_download, color: Colors.green),
+                          Text("رفع من الجهاز", textAlign: TextAlign.right),
                         ],
                       ),
                     ),
                     DropdownMenuItem(
-                      value: "Word",
+                      value: "استخدام الماسح الضوئي",
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text("Word", textAlign: TextAlign.right),
-                          Icon(Icons.file_download, color: Colors.blue),
-                        ],
-                      ),
-                    ),
-                    DropdownMenuItem(
-                      value: "PDF",
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text("PDF", textAlign: TextAlign.right),
-                          Icon(Icons.file_download, color: Colors.red),
+                          Text("استخدام الماسح الضوئي",
+                              textAlign: TextAlign.right),
                         ],
                       ),
                     ),
@@ -96,7 +85,7 @@ class _ExportFileDialogState extends State<ExportFileDialog> {
                     Navigator.pop(context, selectedFormat);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("يرجى اختيار صيغة الملف")),
+                      SnackBar(content: Text("يرجى اختيار رفع المرفقات")),
                     );
                   }
                 },
@@ -109,7 +98,10 @@ class _ExportFileDialogState extends State<ExportFileDialog> {
                   children: [
                     Icon(Icons.save_alt, size: 20, color: Colors.white),
                     SizedBox(width: 8),
-                    Text("إستخراج"),
+                    Text(
+                      "رفع المرفق",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ],
                 ),
               ),
@@ -119,7 +111,7 @@ class _ExportFileDialogState extends State<ExportFileDialog> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("استخراج ملف", style: TextStyle(fontSize: 20)),
+            Text("رفع المرفقات", style: TextStyle(fontSize: 20)),
             IconButton(
               icon: Icon(Icons.close),
               onPressed: () {

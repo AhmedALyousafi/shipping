@@ -4,16 +4,16 @@ import 'package:shipping/core/cubit/cubit.dart';
 import 'package:shipping/features/shipping/presentation/pages/home/drawer_widget.dart';
 
 void main() {
-  runApp(const ShippingApp());
+  runApp(const ArchivingApp());
 }
 
-class ShippingApp extends StatelessWidget {
-  const ShippingApp({super.key});
+class ArchivingApp extends StatelessWidget {
+  const ArchivingApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CustomerOrdersCubit(),
+      create: (context) => ArchivingCubit(),
       child: MaterialApp(
         title: 'Shipping Management',
         theme: ThemeData(

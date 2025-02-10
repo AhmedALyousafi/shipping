@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shipping/core/utils/dropdown.dart';
 import 'package:shipping/core/utils/responsive.dart';
-import 'package:shipping/features/shipping/presentation/pages/shipping%20information/List_butter.dart';
+import 'package:shipping/features/shipping/presentation/pages/archiving%20information/List_butter.dart';
 import 'package:shipping/core/models/newitemmodel.dart';
 
 class Mainmenu extends StatelessWidget {
@@ -239,7 +239,7 @@ class Mainmenu extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 5),
                           child: Container(
                             height: 50,
-                            width: 160,
+                            width: 120,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4),
                               color: Colors.blue[700],
@@ -252,7 +252,7 @@ class Mainmenu extends StatelessWidget {
                                     width:
                                         8), // Space between the icon and text
                                 const Text(
-                                  "بيانات الشحن - جديد", // Arabic text
+                                  "ارشفة الوثائق", // Arabic text
                                   style: TextStyle(
                                     color: Colors.white, // Text color
                                     fontSize: 13, // Text size
@@ -331,7 +331,7 @@ class Mainmenu extends StatelessWidget {
                               const SizedBox(
                                   width: 8), // Space between the icon and text
                               const Text(
-                                "طلب عميل جديد", // Arabic text
+                                "ارشفة الوثائق", // Arabic text
                                 style: TextStyle(
                                   color: Colors.white, // Text color
                                   fontSize: 16, // Text size
