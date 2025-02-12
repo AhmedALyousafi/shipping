@@ -69,7 +69,8 @@ class _ExportFileDialogState extends State<ExportFileDialog> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text("استخدام الماسح الضوئي", textAlign: TextAlign.right),
+                          Text("استخدام الماسح الضوئي",
+                              textAlign: TextAlign.right),
                         ],
                       ),
                     ),
@@ -91,7 +92,7 @@ class _ExportFileDialogState extends State<ExportFileDialog> {
 
                     if (result != null) {
                       setState(() {
-                        _pickedFile = File(result.files.single.path!); 
+                        _pickedFile = File(result.files.single.path!);
                       });
                     }
                   } else {
@@ -102,7 +103,7 @@ class _ExportFileDialogState extends State<ExportFileDialog> {
                   if (selectedFormat != null && _pickedFile != null) {
                     // Proceed with file upload or other actions
                     // ...
-                    Navigator.pop(context, _pickedFile); 
+                    Navigator.pop(context, _pickedFile);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("يرجى اختيار رفع المرفقات")),
@@ -111,7 +112,8 @@ class _ExportFileDialogState extends State<ExportFileDialog> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
@@ -143,4 +145,11 @@ class _ExportFileDialogState extends State<ExportFileDialog> {
       ),
     );
   }
+}
+
+Widget build(BuildContext context) {
+  var isCollapsed;
+  return Container(
+    child: Text(isCollapsed ? 'Collapsed' : 'Expanded'),
+  );
 }

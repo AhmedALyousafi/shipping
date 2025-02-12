@@ -1,25 +1,29 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:shipping/features/shipping/presentation/pages/home/export_file_dialog.dart';
+import 'package:shipping/features/shipping/presentation/pages/uploaded_document/pages/document_upload_page.dart';
 
-void main() {
-  runApp(MyApp());
-}
+// void main() {
+//   runApp(MyApp());
+// }
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'PlutoGrid Example',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: PlutoGridWidget(),
-    );
-  }
-}
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'PlutoGrid Example',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//       ),
+//       home: PlutoGridWidget(),
+//     );
+//   }
+// }
 
 class PlutoGridWidget extends StatefulWidget {
   @override
@@ -35,34 +39,160 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
   @override
   void initState() {
     super.initState();
+
     _initializeColumnsAndRows();
   }
 
   void _initializeColumnsAndRows() {
     columns = [
       PlutoColumn(
+        title: 'الترتيب',
+        field: 'order',
+        type: PlutoColumnType.text(),
+        textAlign: PlutoColumnTextAlign.center,
+        titleTextAlign: PlutoColumnTextAlign.center,
+        backgroundColor: const Color(0xFF0C69C0),
+      ),
+      PlutoColumn(
+        title: 'نوع الوثيقة',
+        field: 'documentType',
+        width: 200,
+        type: PlutoColumnType.text(),
+        textAlign: PlutoColumnTextAlign.center,
+        titleTextAlign: PlutoColumnTextAlign.center,
+        backgroundColor: const Color(0xFF0C69C0),
+      ),
+      PlutoColumn(
+        title: 'تاريخ الإصدار',
+        field: 'issueDate',
+        type: PlutoColumnType.text(),
+        textAlign: PlutoColumnTextAlign.center,
+        titleTextAlign: PlutoColumnTextAlign.center,
+        backgroundColor: const Color(0xFF0C69C0),
+      ),
+      PlutoColumn(
+        title: 'تاريخ الانتهاء',
+        field: 'expiry_date',
+        type: PlutoColumnType.text(),
+        textAlign: PlutoColumnTextAlign.center,
+        titleTextAlign: PlutoColumnTextAlign.center,
+        backgroundColor: const Color(0xFF0C69C0),
+      ),
+      PlutoColumn(
         title: 'نوع المحتوى',
         field: 'contentType',
         type: PlutoColumnType.text(),
+        titleTextAlign: PlutoColumnTextAlign.center,
+        backgroundColor: const Color(0xFF0C69C0),
       ),
       PlutoColumn(
         title: 'امتداد الملف',
         field: 'extension',
         type: PlutoColumnType.text(),
+        titleTextAlign: PlutoColumnTextAlign.center,
+        backgroundColor: const Color(0xFF0C69C0),
       ),
       PlutoColumn(
-        title: 'حجم المرفق (بايت)',
+        title: 'الحجم  (بايت)',
         field: 'size',
         type: PlutoColumnType.text(),
+        titleTextAlign: PlutoColumnTextAlign.center,
+        backgroundColor: const Color(0xFF0C69C0),
+      ),
+      PlutoColumn(
+        title: 'العنوان',
+        field: 'title',
+        width: 150,
+        type: PlutoColumnType.text(),
+        textAlign: PlutoColumnTextAlign.center,
+        titleTextAlign: PlutoColumnTextAlign.center,
+        backgroundColor: const Color(0xFF0C69C0),
+      ),
+      PlutoColumn(
+        enableContextMenu: false,
+        enableDropToResize: false,
+        enableFilterMenuItem: false,
+        enableColumnDrag: false,
+        enableSetColumnsMenuItem: false,
+        enableAutoEditing: false,
+        enableSorting: false,
+        title: '',
+        titleSpan: const TextSpan(children: [
+          WidgetSpan(
+            child: Icon(
+              Icons.more_vert,
+              color: Colors.white,
+            ),
+          ),
+        ]),
+        field: 'actions',
+        type: PlutoColumnType.text(),
+        titleTextAlign: PlutoColumnTextAlign.end,
+        backgroundColor: const Color(0xFF094F90),
+        frozen: PlutoColumnFrozen.end,
+        width: 180, // زيادة العرض لاستيعاب الأيقونات الجديدة
+        renderer: (rendererContext) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                icon: const FaIcon(
+                  FontAwesomeIcons.fileUpload, // تعديل البيانات
+                  color: Color(0xFF319626),
+                  size: 15,
+                ),
+                onPressed: () {
+                  _showExportDialog();
+                },
+              ),
+              IconButton(
+                icon: const FaIcon(
+                  FontAwesomeIcons.fileSignature,
+                  color: Color(0xFF00B4D8),
+                  size: 15,
+                ),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: const FaIcon(
+                  FontAwesomeIcons.eye, // عرض التفاصيل
+                  color: Color(0xFf717171),
+                  size: 15,
+                ),
+                onPressed: () {
+                  _showExportDialog2(context);
+                },
+              ),
+              IconButton(
+                icon: const FaIcon(
+                  FontAwesomeIcons.trashCan, // حذف الملف
+                  color: Color(0xFF819AA7),
+                  size: 15,
+                ),
+                onPressed: () {
+                  setState(() {
+                    rows.remove(rendererContext.row);
+                  });
+                },
+              ),
+            ],
+          );
+        },
       ),
     ];
 
     // Add an initial empty row
     rows.add(PlutoRow(
       cells: {
+        'order': PlutoCell(value: '1'),
+        'documentType': PlutoCell(value: ''),
+        'issueDate': PlutoCell(value: '-'),
+        'expiry_date': PlutoCell(value: '-'),
         'contentType': PlutoCell(value: ''),
         'extension': PlutoCell(value: ''),
         'size': PlutoCell(value: ''),
+        'title': PlutoCell(value: '-'),
+        'actions': PlutoCell(value: 'Delete'),
       },
     ));
   }
@@ -74,15 +204,22 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
       PlatformFile file = result.files.first;
 
       // Extract file information
-      String fileName = file.name;
+      String fileName = file.name; // Get the file name
+      String filePath =
+          kIsWeb ? 'Unavailable on Web' : file.path ?? 'No Path'; // Handle Web
       String fileExtension = fileName.split('.').last;
       int fileSize = file.size;
       String fileType = _getFileType(fileExtension);
 
       // Update the grid with the file data
       setState(() {
+        rows[currentRowIndex].cells['order']!.value =
+            fileName; // Show file name
+        rows[currentRowIndex].cells['issueDate']!.value =
+            filePath; // Show path or message
         rows[currentRowIndex].cells['contentType']!.value = fileType;
-        rows[currentRowIndex].cells['extension']!.value = fileExtension.toUpperCase();
+        rows[currentRowIndex].cells['extension']!.value =
+            fileExtension.toUpperCase();
         rows[currentRowIndex].cells['size']!.value = fileSize.toString();
       });
     }
@@ -118,164 +255,39 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('PlutoGrid Example'),
-      ),
       body: PlutoGrid(
         columns: columns,
         rows: rows,
         onLoaded: (PlutoGridOnLoadedEvent event) {
           stateManager = event.stateManager;
         },
-        configuration: PlutoGridConfiguration(
+        configuration: const PlutoGridConfiguration(
           style: PlutoGridStyleConfig(
             gridBorderColor: Colors.grey,
-            cellTextStyle: TextStyle(fontSize: 14),
-            columnTextStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            cellTextStyle: TextStyle(fontSize: 12),
+            columnTextStyle: TextStyle(
+                fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showExportDialog,
-        child: Icon(Icons.upload),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: _showExportDialog,
+      //   child: const Icon(Icons.upload),
+      // ),
     );
   }
 }
 
-class ExportFileDialog extends StatefulWidget {
-  @override
-  _ExportFileDialogState createState() => _ExportFileDialogState();
+void _showExportDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) => ExportFileDialog(),
+  );
 }
 
-class _ExportFileDialogState extends State<ExportFileDialog> {
-  String? selectedFormat;
-  PlatformFile? _pickedFile;
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: AlertDialog(
-        contentPadding: const EdgeInsets.all(16),
-        titlePadding: const EdgeInsets.only(top: 16, right: 16, left: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        content: SizedBox(
-          width: 603.53,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DropdownButtonFormField2<String>(
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.all(10),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                iconStyleData: const IconStyleData(
-                  icon: Icon(Icons.keyboard_arrow_down),
-                  iconSize: 24,
-                ),
-                hint: const Text("*صيغة الملف"),
-                items: const [
-                  DropdownMenuItem(
-                    value: "رفع من الجهاز",
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text("رفع من الجهاز", textAlign: TextAlign.right),
-                      ],
-                    ),
-                  ),
-                  DropdownMenuItem(
-                    value: "استخدام الماسح الضوئي",
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text("استخدام الماسح الضوئي", textAlign: TextAlign.right),
-                      ],
-                    ),
-                  ),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    selectedFormat = value;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-              if (_pickedFile != null)
-                Text(
-                  "تم اختيار الملف: ${_pickedFile!.name}",
-                  style: const TextStyle(fontSize: 14, color: Colors.green),
-                ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () async {
-                  if (selectedFormat == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("يرجى اختيار صيغة الملف")),
-                    );
-                    return;
-                  }
-
-                  if (selectedFormat == "رفع من الجهاز") {
-                    FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-                    if (result != null) {
-                      setState(() {
-                        _pickedFile = result.files.first;
-                      });
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("لم يتم اختيار ملف")),
-                      );
-                    }
-                  } else if (selectedFormat == "استخدام الماسح الضوئي") {
-                    // Placeholder for scanner functionality
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("هذه الميزة غير متاحة حالياً")),
-                    );
-                  }
-
-                  if (_pickedFile != null) {
-                    Navigator.pop(context, _pickedFile); // Return the selected file
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.save_alt, size: 20, color: Colors.white),
-                    SizedBox(width: 8),
-                    Text(
-                      "رفع المرفق",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("رفع المرفقات", style: TextStyle(fontSize: 20)),
-            IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+void _showExportDialog2(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) => const DocumentUploadPage(),
+  );
 }
