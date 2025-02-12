@@ -8,23 +8,6 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:shipping/features/shipping/presentation/pages/home/export_file_dialog.dart';
 import 'package:shipping/features/shipping/presentation/pages/uploaded_document/pages/document_upload_page.dart';
 
-// void main() {
-//   runApp(MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'PlutoGrid Example',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: PlutoGridWidget(),
-//     );
-//   }
-// }
-
 class PlutoGridWidget extends StatefulWidget {
   @override
   _PlutoGridWidgetState createState() => _PlutoGridWidgetState();
@@ -45,6 +28,60 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
 
   void _initializeColumnsAndRows() {
     columns = [
+      PlutoColumn(
+        title: '',
+        field: 'addRow',
+        type: PlutoColumnType.text(),
+        width: 50,
+        enableEditingMode: false,
+        enableColumnDrag: false,
+        enableRowDrag: false,
+        enableContextMenu: false,
+        backgroundColor: const Color(0xFF0C69C0),
+        renderer: (rendererContext) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      // الحصول على فهرس الصف الحالي
+                      int currentRowIndex = rendererContext.rowIdx;
+                      PlutoRow currentRow = rows[currentRowIndex];
+
+                      // إنشاء صف جديد مع نسخ "نوع الوثيقة" و "تاريخ الإصدار"
+                      final newRow = PlutoRow(
+                        cells: {
+                          'addRow': PlutoCell(value: ''),
+                          'order': PlutoCell(value: ''),
+                          'documentType': PlutoCell(value: ''),
+                          'issueDate':
+                              PlutoCell(value: '-'), // نسخ تاريخ الإصدار
+                          'expiry_date': PlutoCell(value: ''),
+                          'contentType': PlutoCell(value: ''),
+                          'extension': PlutoCell(value: ''),
+                          'size': PlutoCell(value: ''),
+                          'title': PlutoCell(value: ''),
+                          'actions': PlutoCell(value: 'Delete'),
+                        },
+                      );
+
+                      setState(() {
+                        rows.insert(currentRowIndex + 1, newRow);
+                      });
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      ),
       PlutoColumn(
         title: 'الترتيب',
         field: 'order',
@@ -180,11 +217,21 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
         },
       ),
     ];
+    rows.add(_createEmptyRow(1));
+  }
 
-    // Add an initial empty row
-    rows.add(PlutoRow(
+  void _addNewRow() {
+    setState(() {
+      int newIndex = rows.length + 1;
+      rows.add(_createEmptyRow(newIndex));
+    });
+  }
+
+  PlutoRow _createEmptyRow(int index) {
+    return PlutoRow(
       cells: {
-        'order': PlutoCell(value: '1'),
+        'addRow': PlutoCell(value: ''),
+        'order': PlutoCell(value: index.toString()),
         'documentType': PlutoCell(value: ''),
         'issueDate': PlutoCell(value: '-'),
         'expiry_date': PlutoCell(value: '-'),
@@ -194,7 +241,7 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
         'title': PlutoCell(value: '-'),
         'actions': PlutoCell(value: 'Delete'),
       },
-    ));
+    );
   }
 
   void _showExportDialog() async {
@@ -213,7 +260,7 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
 
       // Update the grid with the file data
       setState(() {
-        rows[currentRowIndex].cells['order']!.value =
+        rows[currentRowIndex].cells['documentType']!.value =
             fileName; // Show file name
         rows[currentRowIndex].cells['issueDate']!.value =
             filePath; // Show path or message
