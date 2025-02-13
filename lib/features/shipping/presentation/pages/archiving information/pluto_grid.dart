@@ -41,42 +41,45 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
         renderer: (rendererContext) {
           return StatefulBuilder(
             builder: (context, setState) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.arrow_drop_down,
-                      color: Colors.grey,
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.arrow_drop_down,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        // الحصول على فهرس الصف الحالي
+                        int currentRowIndex = rendererContext.rowIdx;
+                        PlutoRow currentRow = rows[currentRowIndex];
+
+                        // إنشاء صف جديد مع نسخ "نوع الوثيقة" و "تاريخ الإصدار"
+                        final newRow = PlutoRow(
+                          cells: {
+                            'addRow': PlutoCell(value: ''),
+                            'order': PlutoCell(value: ''),
+                            'documentType': PlutoCell(value: 'documentType'),
+                            'issueDate': PlutoCell(
+                                value: 'issueDate'), // نسخ تاريخ الإصدار
+                            'expiry_date': PlutoCell(value: ''),
+                            'contentType': PlutoCell(value: ''),
+                            'extension': PlutoCell(value: ''),
+                            'size': PlutoCell(value: ''),
+                            'title': PlutoCell(value: ''),
+                            'actions': PlutoCell(value: 'Delete'),
+                          },
+                        );
+
+                        setState(() {
+                          rows.insert(currentRowIndex + 1, newRow);
+                        });
+                      },
                     ),
-                    onPressed: () {
-                      // الحصول على فهرس الصف الحالي
-                      int currentRowIndex = rendererContext.rowIdx;
-                      PlutoRow currentRow = rows[currentRowIndex];
-
-                      // إنشاء صف جديد مع نسخ "نوع الوثيقة" و "تاريخ الإصدار"
-                      final newRow = PlutoRow(
-                        cells: {
-                          'addRow': PlutoCell(value: ''),
-                          'order': PlutoCell(value: ''),
-                          'documentType': PlutoCell(value: ''),
-                          'issueDate':
-                              PlutoCell(value: '-'), // نسخ تاريخ الإصدار
-                          'expiry_date': PlutoCell(value: ''),
-                          'contentType': PlutoCell(value: ''),
-                          'extension': PlutoCell(value: ''),
-                          'size': PlutoCell(value: ''),
-                          'title': PlutoCell(value: ''),
-                          'actions': PlutoCell(value: 'Delete'),
-                        },
-                      );
-
-                      setState(() {
-                        rows.insert(currentRowIndex + 1, newRow);
-                      });
-                    },
-                  ),
-                ],
+                  ],
+                ),
               );
             },
           );
@@ -192,12 +195,12 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
               ),
               IconButton(
                 icon: const FaIcon(
-                  FontAwesomeIcons.eye, // عرض التفاصيل
+                  FontAwesomeIcons.eye,
                   color: Color(0xFf717171),
                   size: 15,
                 ),
                 onPressed: () {
-                  _showExportDialog2(context);
+                  _showExportDialog2(context, rendererContext.row);
                 },
               ),
               IconButton(
@@ -250,24 +253,24 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
     if (result != null) {
       PlatformFile file = result.files.first;
 
-      // Extract file information
-      String fileName = file.name; // Get the file name
-      String filePath =
-          kIsWeb ? 'Unavailable on Web' : file.path ?? 'No Path'; // Handle Web
+      // بيانات الملف
+      String fileName = file.name;
       String fileExtension = fileName.split('.').last;
       int fileSize = file.size;
       String fileType = _getFileType(fileExtension);
 
-      // Update the grid with the file data
+      Uint8List? fileBytes = file.bytes; // تحميل الملف بصيغة Bytes
+
+      // تحديث البيانات في الصف الحالي
       setState(() {
-        rows[currentRowIndex].cells['documentType']!.value =
-            fileName; // Show file name
-        rows[currentRowIndex].cells['issueDate']!.value =
-            filePath; // Show path or message
+        rows[currentRowIndex].cells['documentType']!.value = fileName;
+        rows[currentRowIndex].cells['issueDate']!.value = 'تم تحميل الملف';
         rows[currentRowIndex].cells['contentType']!.value = fileType;
         rows[currentRowIndex].cells['extension']!.value =
             fileExtension.toUpperCase();
         rows[currentRowIndex].cells['size']!.value = fileSize.toString();
+        rows[currentRowIndex].cells['fileBytes'] =
+            PlutoCell(value: fileBytes); // تخزين الملف للعرض لاحقًا
       });
     }
   }
@@ -332,9 +335,21 @@ void _showExportDialog(BuildContext context) {
   );
 }
 
-void _showExportDialog2(BuildContext context) {
+void _showExportDialog2(BuildContext context, PlutoRow selectedRow) {
+  if (selectedRow.cells['documentType']?.value == null) {
+    return;
+  }
+
   showDialog(
     context: context,
-    builder: (BuildContext context) => const DocumentUploadPage(),
+    builder: (BuildContext context) {
+      return DocumentUploadPage(
+        fileName: selectedRow.cells['documentType']?.value ?? 'غير متوفر',
+        filePath: selectedRow.cells['issueDate']?.value ?? '',
+        fileType: selectedRow.cells['contentType']?.value ?? 'غير متوفر',
+        fileExtension: selectedRow.cells['extension']?.value ?? 'غير متوفر',
+        fileSize: selectedRow.cells['size']?.value ?? 'غير متوفر',
+      );
+    },
   );
 }
