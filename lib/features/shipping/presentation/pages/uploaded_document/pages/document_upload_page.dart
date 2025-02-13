@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:open_file/open_file.dart';
 
 class DocumentUploadPage extends StatelessWidget {
@@ -8,6 +9,7 @@ class DocumentUploadPage extends StatelessWidget {
   final String fileType;
   final String fileExtension;
   final String fileSize;
+  final Uint8List? fileBytes; // إضافة هذا الحقل
 
   const DocumentUploadPage({
     Key? key,
@@ -16,6 +18,7 @@ class DocumentUploadPage extends StatelessWidget {
     required this.fileType,
     required this.fileExtension,
     required this.fileSize,
+    this.fileBytes, // إضافة هذا الحقل
   }) : super(key: key);
 
   @override
@@ -38,6 +41,13 @@ class DocumentUploadPage extends StatelessWidget {
       children: [
         Text("نوع الملف: $fileType\nالحجم: $fileSize بايت"),
         const SizedBox(height: 10),
+        if (_isImage(fileExtension) && fileBytes != null)
+          Image.memory(
+            fileBytes!,
+            height: 200,
+            width: 200,
+            fit: BoxFit.cover,
+          ),
         if (_isExcelOrWord())
           ElevatedButton(
             onPressed: () => _openFile(context),
@@ -47,9 +57,15 @@ class DocumentUploadPage extends StatelessWidget {
     );
   }
 
+  bool _isImage(String fileExtension) {
+    return ['jpg', 'jpeg', 'png', 'gif'].contains(fileExtension.toLowerCase());
+  }
+
   bool _isExcelOrWord() {
     return fileExtension.toLowerCase() == 'xlsx' ||
-        fileExtension.toLowerCase() == 'xls';
+        fileExtension.toLowerCase() == 'xls' ||
+        fileExtension.toLowerCase() == 'docx' ||
+        fileExtension.toLowerCase() == 'doc';
   }
 
   void _openFile(BuildContext context) {

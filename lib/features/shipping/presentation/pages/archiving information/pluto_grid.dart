@@ -1,10 +1,10 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:shipping/features/shipping/presentation/pages/home/export_file_dialog.dart';
 import 'package:shipping/features/shipping/presentation/pages/uploaded_document/pages/document_upload_page.dart';
 
@@ -22,7 +22,6 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
   @override
   void initState() {
     super.initState();
-
     _initializeColumnsAndRows();
   }
 
@@ -38,52 +37,6 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
         enableRowDrag: false,
         enableContextMenu: false,
         backgroundColor: const Color(0xFF0C69C0),
-        renderer: (rendererContext) {
-          return StatefulBuilder(
-            builder: (context, setState) {
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      icon: const Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.grey,
-                      ),
-                      onPressed: () {
-                        // الحصول على فهرس الصف الحالي
-                        int currentRowIndex = rendererContext.rowIdx;
-                        PlutoRow currentRow = rows[currentRowIndex];
-
-                        // إنشاء صف جديد مع نسخ "نوع الوثيقة" و "تاريخ الإصدار"
-                        final newRow = PlutoRow(
-                          cells: {
-                            'addRow': PlutoCell(value: ''),
-                            'order': PlutoCell(value: ''),
-                            'documentType': PlutoCell(value: 'documentType'),
-                            'issueDate': PlutoCell(
-                                value: 'issueDate'), // نسخ تاريخ الإصدار
-                            'expiry_date': PlutoCell(value: ''),
-                            'contentType': PlutoCell(value: ''),
-                            'extension': PlutoCell(value: ''),
-                            'size': PlutoCell(value: ''),
-                            'title': PlutoCell(value: ''),
-                            'actions': PlutoCell(value: 'Delete'),
-                          },
-                        );
-
-                        setState(() {
-                          rows.insert(currentRowIndex + 1, newRow);
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
       ),
       PlutoColumn(
         title: 'الترتيب',
@@ -170,19 +123,19 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
         titleTextAlign: PlutoColumnTextAlign.end,
         backgroundColor: const Color(0xFF094F90),
         frozen: PlutoColumnFrozen.end,
-        width: 180, // زيادة العرض لاستيعاب الأيقونات الجديدة
+        width: 180,
         renderer: (rendererContext) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               IconButton(
                 icon: const FaIcon(
-                  FontAwesomeIcons.fileUpload, // تعديل البيانات
+                  FontAwesomeIcons.fileUpload,
                   color: Color(0xFF319626),
                   size: 15,
                 ),
                 onPressed: () {
-                  _showExportDialog();
+                  _showExportDialog(rendererContext.rowIdx);
                 },
               ),
               IconButton(
@@ -205,7 +158,7 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
               ),
               IconButton(
                 icon: const FaIcon(
-                  FontAwesomeIcons.trashCan, // حذف الملف
+                  FontAwesomeIcons.trashCan,
                   color: Color(0xFF819AA7),
                   size: 15,
                 ),
@@ -247,7 +200,7 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
     );
   }
 
-  void _showExportDialog() async {
+  void _showExportDialog(int rowIndex) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
     if (result != null) {
@@ -259,18 +212,16 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
       int fileSize = file.size;
       String fileType = _getFileType(fileExtension);
 
-      Uint8List? fileBytes = file.bytes; // تحميل الملف بصيغة Bytes
+      Uint8List? fileBytes = file.bytes;
 
       // تحديث البيانات في الصف الحالي
       setState(() {
-        rows[currentRowIndex].cells['documentType']!.value = fileName;
-        rows[currentRowIndex].cells['issueDate']!.value = 'تم تحميل الملف';
-        rows[currentRowIndex].cells['contentType']!.value = fileType;
-        rows[currentRowIndex].cells['extension']!.value =
-            fileExtension.toUpperCase();
-        rows[currentRowIndex].cells['size']!.value = fileSize.toString();
-        rows[currentRowIndex].cells['fileBytes'] =
-            PlutoCell(value: fileBytes); // تخزين الملف للعرض لاحقًا
+        rows[rowIndex].cells['documentType']!.value = fileName;
+        rows[rowIndex].cells['issueDate']!.value = 'تم تحميل الملف';
+        rows[rowIndex].cells['contentType']!.value = fileType;
+        rows[rowIndex].cells['extension']!.value = fileExtension.toUpperCase();
+        rows[rowIndex].cells['size']!.value = fileSize.toString();
+        rows[rowIndex].cells['fileBytes'] = PlutoCell(value: fileBytes);
       });
     }
   }
@@ -320,19 +271,8 @@ class _PlutoGridWidgetState extends State<PlutoGridWidget> {
           ),
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _showExportDialog,
-      //   child: const Icon(Icons.upload),
-      // ),
     );
   }
-}
-
-void _showExportDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) => ExportFileDialog(),
-  );
 }
 
 void _showExportDialog2(BuildContext context, PlutoRow selectedRow) {
@@ -349,6 +289,7 @@ void _showExportDialog2(BuildContext context, PlutoRow selectedRow) {
         fileType: selectedRow.cells['contentType']?.value ?? 'غير متوفر',
         fileExtension: selectedRow.cells['extension']?.value ?? 'غير متوفر',
         fileSize: selectedRow.cells['size']?.value ?? 'غير متوفر',
+        fileBytes: selectedRow.cells['fileBytes']?.value, // تمرير fileBytes
       );
     },
   );
